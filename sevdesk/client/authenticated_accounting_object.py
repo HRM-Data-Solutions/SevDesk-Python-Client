@@ -14,7 +14,11 @@ class AuthenticatedAccountingObject:
     def __init__(self):
 
         super().__init__()
-        assert self._client is not NotImplemented, f"Client is not set in {self.__class__.__name__}"
+
+        if self._client is NotImplemented:
+            raise NotImplementedError(
+                f"Please set the _client attribute in {self.__class__.__name__}"
+            )
 
     def __getattribute__(self, item):
         attr_ = super().__getattribute__(item)
@@ -24,8 +28,11 @@ class AuthenticatedAccountingObject:
             @wraps(attr_)
             def wrapper(*args, **kwargs):
                 client = kwargs.get("client")
-                assert client is None, f"Do not pass client in methods when using {self.__class__.__name__}"
-                return attr_(*args, **kwargs)
 
+                if client is not None:
+                    raise ValueError(
+                        f"Do not pass client in {self.__class__.__name__} methods. Must be implemented in the class."
+                    )
+                return attr_(*args, **kwargs)
             return wrapper
         return attr_
