@@ -528,31 +528,31 @@ class Invoice:
 class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
 
     def _get_api_model(self, client: Client = None) -> CreateInvoiceByFactoryJsonBody:
-        return super()._get_api_model(self.client)
+        return super()._get_api_model(self._client)
 
     def update(self, client: Client = None):
-        return super().update(self.client)
+        return super().update(self._client)
 
     def create(self, client: Client = None):
-        return super().create(self.client)
+        return super().create(self._client)
 
     def delete(self, client: Client = None):
-        return super().delete(self.client)
+        return super().delete(self._client)
 
     @classmethod
     def _from_model(cls, client: Client, model: FactoryInvoice) -> Invoice:
-        return super()._from_model(cls.client, model)
+        return super()._from_model(cls._client, model)
 
     def download_pdf(self, client: Client = None) -> Pdf:
-        return super().download_pdf(self.client)
+        return super().download_pdf(self._client)
 
     def set_to_draft(self, client: Client = None):
-        return super().set_to_draft(self.client)
+        return super().set_to_draft(self._client)
 
     @classmethod
     def get_by_reference(cls, reference: str, client: Client) -> Union[None, Invoice]:
-        return super().get_by_reference(cls.client, reference)
+        return super().get_by_reference(cls._client, reference)
 
     @classmethod
     def get_by_id(cls, id: int, client: Client = None) -> Union[None, Invoice]:
-        return super().get_by_id(cls.client, id)
+        return super().get_by_id(cls._client, id)

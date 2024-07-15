@@ -9,12 +9,12 @@ class AuthenticatedAccountingObject:
     The client attribute should be set in the child class.
     """
 
-    client: AuthenticatedClient = NotImplemented
+    _client: AuthenticatedClient = NotImplemented
 
     def __init__(self):
 
         super().__init__()
-        assert self.client is not NotImplemented, f"Client is not set in {self.__class__.__name__}"
+        assert self._client is not NotImplemented, f"Client is not set in {self.__class__.__name__}"
 
     def __getattribute__(self, item):
         attr_ = super().__getattribute__(item)
