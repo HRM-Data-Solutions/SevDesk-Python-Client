@@ -2,9 +2,10 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import List, Union
+from typing import List, Union, Dict, Any
 
 import attrs
+import attr
 
 from .. import UNSET, Client, Unset
 from ..client.api.invoice import (
@@ -29,7 +30,10 @@ from ..client.models import (
     FactoryInvoice,
     FactoryInvoicePositionSave,
     InvoiceChangeStatusJsonBody,
-    InvoiceChangeStatusJsonBodyValue,
+    InvoiceChangeStatusJsonBodyValue, DocumentModelTaxType, InvoiceInvoiceType, DocumentModelSevClient,
+    DocumentModelCreateUser, DocumentModelAddressContactRef, DocumentModelPaymentMethod, DocumentModelCostCentre,
+    DocumentModelOrigin, DocumentModelTaxSet, DocumentModelEntryType, DocumentModelSendType,
+    DocumentModelDatevConnectOnline,
 )
 from ..common import SevDesk, SevUser
 from ..contact import Contact
@@ -98,6 +102,67 @@ class Invoice:
     "Internal cache of the foot text when caching invoice from SevDesk"
     _address: Union[Unset, str] = UNSET
     "Internal cache of the address text when caching invoice from SevDesk"
+    contact: DocumentModelContact = UNSET
+    discount: int = 0
+    tax_type: DocumentModelTaxType = DocumentModelTaxType.DEFAULT
+    currency: str = "EUR"
+    invoice_type: InvoiceInvoiceType = InvoiceInvoiceType.RE
+    # create: Union[Unset, datetime.datetime] = UNSET
+    # update: Union[Unset, datetime.datetime] = UNSET
+    sev_client: Union[Unset, DocumentModelSevClient] = UNSET
+    head_text: Union[Unset, None, str] = UNSET
+    # foot_text: Union[Unset, None, str] = UNSET
+    time_to_pay: Union[Unset, None, int] = UNSET
+    discount_time: Union[Unset, None, int] = UNSET
+    address_name: Union[Unset, None, str] = UNSET
+    address_street: Union[Unset, None, str] = UNSET
+    address_zip: Union[Unset, None, str] = UNSET
+    address_city: Union[Unset, None, str] = UNSET
+    address_country: Union[Unset, DocumentModelAddressCountry] = UNSET
+    pay_date: Union[Unset, None, datetime.datetime] = UNSET
+    create_user: Union[Unset, DocumentModelCreateUser] = UNSET
+    dunning_level: Union[Unset, None, int] = UNSET
+    address_parent_name: Union[Unset, None, str] = UNSET
+    address_contact_ref: Union[Unset, None, DocumentModelAddressContactRef] = UNSET
+    payment_method: Union[Unset, DocumentModelPaymentMethod] = UNSET
+    cost_centre: Union[Unset, DocumentModelCostCentre] = UNSET
+    send_date: Union[Unset, None, datetime.datetime] = UNSET
+    origin: Union[Unset, None, DocumentModelOrigin] = UNSET
+    reminder_total: Union[Unset, None, float] = UNSET
+    reminder_debit: Union[Unset, None, float] = UNSET
+    reminder_deadline: Union[Unset, None, int] = UNSET
+    reminder_charge: Union[Unset, None, float] = UNSET
+    address_parent_name_2: Union[Unset, None, str] = UNSET
+    address_name_2: Union[Unset, None, str] = UNSET
+    tax_set: Union[Unset, None, DocumentModelTaxSet] = UNSET
+    address_gender: Union[Unset, None, str] = UNSET
+    account_end_date: Union[Unset, None, int] = UNSET
+    # address: Union[Unset, None, str] = UNSET
+    sum_net: Union[Unset, float] = UNSET
+    sum_tax: Union[Unset, float] = UNSET
+    sum_gross: Union[Unset, float] = UNSET
+    sum_discounts: Union[Unset, float] = UNSET
+    sum_net_foreign_currency: Union[Unset, float] = UNSET
+    sum_tax_foreign_currency: Union[Unset, float] = UNSET
+    sum_gross_foreign_currency: Union[Unset, float] = UNSET
+    sum_discounts_foreign_currency: Union[Unset, float] = UNSET
+    sum_net_accounting: Union[Unset, float] = UNSET
+    sum_tax_accounting: Union[Unset, float] = UNSET
+    sum_gross_accounting: Union[Unset, float] = UNSET
+    paid_amount: Union[Unset, None, float] = UNSET
+    entry_type: Union[Unset, None, DocumentModelEntryType] = UNSET
+    customer_internal_note: Union[Unset, None, str] = UNSET
+    show_net: Union[Unset, bool] = True
+    enshrined: Union[Unset, None, datetime.datetime] = UNSET
+    send_type: Union[Unset, None, DocumentModelSendType] = UNSET
+    delivery_date_until: Union[Unset, None, datetime.datetime] = UNSET
+    datev_connect_online: Union[Unset, None, DocumentModelDatevConnectOnline] = UNSET
+    send_payment_received_notification_date: Union[Unset, None, int] = UNSET
+    object_name: Union[Unset, str] = "Invoice"
+    account_intervall: Union[Unset, None, str] = UNSET
+    account_last_invoice: Union[Unset, None, int] = UNSET
+    account_next_invoice: Union[Unset, None, int] = UNSET
+    additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
 
     def __attrs_post_init__(self):
         if not self.tax_text:
@@ -160,6 +225,62 @@ class Invoice:
             tax_text=self.tax_text,
             customer_internal_note=self.reference,
             show_net=not self.gross,
+            # Additional kwargs added here
+            discount=self.discount,
+            tax_type=self.tax_type,
+            currency=self.currency,
+            invoice_type=self.invoice_type,
+            map_all=True,
+            # create=self.create,
+            # update=self.update,
+            sev_client=self.sev_client,
+            head_text=self.head_text,
+            time_to_pay=self.time_to_pay,
+            discount_time=self.discount_time,
+            address_name=self.address_name,
+            address_street=self.address_street,
+            address_zip=self.address_zip,
+            address_city=self.address_city,
+            pay_date=self.pay_date,
+            create_user=self.create_user,
+            dunning_level=self.dunning_level,
+            address_parent_name=self.address_parent_name,
+            address_contact_ref=self.address_contact_ref,
+            payment_method=self.payment_method,
+            cost_centre=self.cost_centre,
+            send_date=self.send_date,
+            origin=self.origin,
+            reminder_total=self.reminder_total,
+            reminder_debit=self.reminder_debit,
+            reminder_deadline=self.reminder_deadline,
+            reminder_charge=self.reminder_charge,
+            address_parent_name_2=self.address_parent_name_2,
+            address_name_2=self.address_name_2,
+            tax_set=self.tax_set,
+            address_gender=self.address_gender,
+            account_end_date=self.account_end_date,
+            sum_net=self.sum_net,
+            sum_tax=self.sum_tax,
+            sum_gross=self.sum_gross,
+            sum_discounts=self.sum_discounts,
+            sum_net_foreign_currency=self.sum_net_foreign_currency,
+            sum_tax_foreign_currency=self.sum_tax_foreign_currency,
+            sum_gross_foreign_currency=self.sum_gross_foreign_currency,
+            sum_discounts_foreign_currency=self.sum_discounts_foreign_currency,
+            sum_net_accounting=self.sum_net_accounting,
+            sum_tax_accounting=self.sum_tax_accounting,
+            sum_gross_accounting=self.sum_gross_accounting,
+            paid_amount=self.paid_amount,
+            entry_type=self.entry_type,
+            enshrined=self.enshrined,
+            send_type=self.send_type,
+            delivery_date_until=self.delivery_date_until,
+            datev_connect_online=self.datev_connect_online,
+            send_payment_received_notification_date=self.send_payment_received_notification_date,
+            object_name=self.object_name,
+            account_intervall=self.account_intervall,
+            account_last_invoice=self.account_last_invoice,
+            account_next_invoice=self.account_next_invoice
         )
 
         invoice_pos = []
@@ -273,6 +394,61 @@ class Invoice:
             items=items if items else UNSET,
             overall_discount=overall_discount,
             address=model.address,
+            # Additional kwargs added here
+            discount=model.discount,
+            tax_type=model.tax_type,
+            currency=model.currency,
+            invoice_type=model.invoice_type,
+            # create=model.create,
+            # update=model.update,
+            sev_client=model.sev_client,
+            head_text=model.head_text,
+            time_to_pay=model.time_to_pay,
+            discount_time=model.discount_time,
+            address_name=model.address_name,
+            address_street=model.address_street,
+            address_zip=model.address_zip,
+            address_city=model.address_city,
+            pay_date=model.pay_date,
+            create_user=model.create_user,
+            dunning_level=model.dunning_level,
+            address_parent_name=model.address_parent_name,
+            address_contact_ref=model.address_contact_ref,
+            payment_method=model.payment_method,
+            cost_centre=model.cost_centre,
+            send_date=model.send_date,
+            origin=model.origin,
+            reminder_total=model.reminder_total,
+            reminder_debit=model.reminder_debit,
+            reminder_deadline=model.reminder_deadline,
+            reminder_charge=model.reminder_charge,
+            address_parent_name_2=model.address_parent_name_2,
+            address_name_2=model.address_name_2,
+            tax_set=model.tax_set,
+            address_gender=model.address_gender,
+            account_end_date=model.account_end_date,
+            sum_net=model.sum_net,
+            sum_tax=model.sum_tax,
+            sum_gross=model.sum_gross,
+            sum_discounts=model.sum_discounts,
+            sum_net_foreign_currency=model.sum_net_foreign_currency,
+            sum_tax_foreign_currency=model.sum_tax_foreign_currency,
+            sum_gross_foreign_currency=model.sum_gross_foreign_currency,
+            sum_discounts_foreign_currency=model.sum_discounts_foreign_currency,
+            sum_net_accounting=model.sum_net_accounting,
+            sum_tax_accounting=model.sum_tax_accounting,
+            sum_gross_accounting=model.sum_gross_accounting,
+            paid_amount=model.paid_amount,
+            entry_type=model.entry_type,
+            enshrined=model.enshrined,
+            send_type=model.send_type,
+            delivery_date_until=model.delivery_date_until,
+            datev_connect_online=model.datev_connect_online,
+            send_payment_received_notification_date=model.send_payment_received_notification_date,
+            object_name=model.object_name,
+            account_intervall=model.account_intervall,
+            account_last_invoice=model.account_last_invoice,
+            account_next_invoice=model.account_next_invoice
         )
 
     def download_pdf(self, client: Client) -> Pdf:
