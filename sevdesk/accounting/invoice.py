@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+from functools import wraps
 from typing import List, Union, Dict, Any
 
 import attrs
@@ -19,6 +20,7 @@ from ..client.api.invoice import (
 )
 from ..client.api.invoice_discounts import get_invoice_discounts_by_id
 from ..client.api.invoice_pos import get_invoice_pos
+from ..client.authenticated_accounting_object import AuthenticatedAccountingObject
 from ..client.models import (
     CreateInvoiceByFactoryJsonBody,
     CreateInvoiceByFactoryResponse201,
@@ -521,3 +523,36 @@ class Invoice:
 
         invoice_model = response.parsed.objects[0]
         return Invoice._from_model(client, invoice_model)
+
+
+class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
+
+    def _get_api_model(self, client: Client = None) -> CreateInvoiceByFactoryJsonBody:
+        return super()._get_api_model(self.client)
+
+    def update(self, client: Client = None):
+        return super().update(self.client)
+
+    def create(self, client: Client = None):
+        return super().create(self.client)
+
+    def delete(self, client: Client = None):
+        return super().delete(self.client)
+
+    @classmethod
+    def _from_model(cls, client: Client, model: FactoryInvoice) -> Invoice:
+        return super()._from_model(cls.client, model)
+
+    def download_pdf(self, client: Client = None) -> Pdf:
+        return super().download_pdf(self.client)
+
+    def set_to_draft(self, client: Client = None):
+        return super().set_to_draft(self.client)
+
+    @classmethod
+    def get_by_reference(cls, reference: str, client: Client) -> Union[None, Invoice]:
+        return super().get_by_reference(cls.client, reference)
+
+    @classmethod
+    def get_by_id(cls, id: int, client: Client = None) -> Union[None, Invoice]:
+        return super().get_by_id(cls.client, id)
