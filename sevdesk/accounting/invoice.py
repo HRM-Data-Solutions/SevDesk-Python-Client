@@ -555,7 +555,7 @@ class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
         return super().delete(client=self._get_client())
 
     @classmethod
-    def _from_model(cls, client: Client = None, model: FactoryInvoice = None) -> Invoice:
+    def _from_model(cls, client: Client = None, model: FactoryInvoice = None) -> AuthenticatedInvoice:
         return super()._from_model(client=cls._get_client(), model=model)
 
     def download_pdf(self, client: Client = None) -> Pdf:
@@ -565,7 +565,7 @@ class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
         return super().set_to_draft(client=self._get_client())
 
     @classmethod
-    def get_by_reference(cls, client: Client = None, reference: str = None) -> Union[None, Invoice]:
+    def get_by_reference(cls, client: Client = None, reference: str = None) -> Union[None, AuthenticatedInvoice]:
 
         if reference is None:
             raise ValueError("reference must be set")
@@ -573,7 +573,7 @@ class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
         return super().get_by_reference(client=cls._get_client(), reference=reference)
 
     @classmethod
-    def get_by_id(cls, client: Client = None, id: int = None) -> Union[None, Invoice]:
+    def get_by_id(cls, client: Client = None, id: int = None) -> Union[None, AuthenticatedInvoice]:
 
         if id is None:
             raise ValueError("id must be set")
