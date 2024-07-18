@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 from datetime import datetime
 from enum import Enum
 from functools import wraps
@@ -167,6 +168,7 @@ class Invoice:
     additional_properties: Dict[str, Any] = attr.ib(init=False, factory=dict)
 
     def __attrs_post_init__(self):
+
         if not self.tax_text:
             self.tax_text = f"Mehrwertssteuer {self.tax_rate}%"
 
@@ -177,6 +179,7 @@ class Invoice:
             self.delivery_date = self.invoice_date
 
     def _get_api_model(self, client: Client) -> CreateInvoiceByFactoryJsonBody:
+
         if not self.contact_person:
             self.contact_person = SevDesk.user(client)
 
@@ -322,6 +325,7 @@ class Invoice:
             self.overall_discount.id = int(overall_discount.id)
 
     def update(self, client: Client):
+
         if not self.id:
             RuntimeError("Cannot update unknwon invoice - missing ID.")
 
@@ -333,6 +337,7 @@ class Invoice:
         self._update_ids(response)
 
     def create(self, client: Client):
+
         if self.id:
             RuntimeError("Cannot create an already known invoice - update instead?")
 
@@ -343,6 +348,7 @@ class Invoice:
         self._update_ids(response)
 
     def delete(self, client: Client):
+
         if not self.id:
             raise RuntimeError("Cannot delete unknwon invoice - missing ID.")
 
@@ -351,6 +357,7 @@ class Invoice:
 
     @classmethod
     def _from_model(cls, client: Client, model: FactoryInvoice) -> Invoice:
+
         # Query customer
         customer = Contact.get_by_id(client, model.contact.id)
 
@@ -458,6 +465,7 @@ class Invoice:
         Download the invoice as PDF.
         Be careful - this will mark the invoice as send!
         """
+
         if not self.id:
             raise RuntimeError("Cannot download pdf for unknwon invoice - missing ID!")
         response = invoice_get_pdf.sync_detailed(client=client, document_id=self.id)
@@ -475,6 +483,7 @@ class Invoice:
         """
         If possible (invoice not enshrined), reset to draft-status
         """
+
         if not self.id:
             raise RuntimeError("Cannot change status for unknown invoice - missing ID!")
 
@@ -500,6 +509,7 @@ class Invoice:
 
         However, you can still set new transactions to update an invoice.
         """
+
         response = get_invoices.sync_detailed(
             client=client, customer_internal_note=reference
         )
@@ -511,10 +521,11 @@ class Invoice:
             return None
 
         invoice_model = response.parsed.objects[0]
-        return Invoice._from_model(client, invoice_model)
+        return cls._from_model(client, invoice_model)
 
     @classmethod
     def get_by_id(cls, client: Client, id: int) -> Union[None, Invoice]:
+
         response = get_invoice_by_id.sync_detailed(client=client, document_id=id)
         SevDesk.raise_for_status(response, "getting invoice by id")
 
@@ -522,37 +533,41 @@ class Invoice:
             return None
 
         invoice_model = response.parsed.objects[0]
-        return Invoice._from_model(client, invoice_model)
+        return cls._from_model(client, invoice_model)
 
 
 class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
+    """
+    An Invoice which is authenticated by a client.
+    This allows to create, update and delete the invoice.
+    """
 
-    def _get_api_model(self, client: Client = None) -> CreateInvoiceByFactoryJsonBody:
-        return super()._get_api_model(self._client)
+    def _get_api_model(self, *_, **__) -> CreateInvoiceByFactoryJsonBody:
+        return super()._get_api_model(client=self._get_client())
 
-    def update(self, client: Client = None):
-        return super().update(self._client)
+    def update(self, *_, **__):
+        return super().update(client=self._get_client())
 
-    def create(self, client: Client = None):
-        return super().create(self._client)
+    def create(self, *_, **__):
+        return super().create(client=self._get_client())
 
-    def delete(self, client: Client = None):
-        return super().delete(self._client)
-
-    @classmethod
-    def _from_model(cls, client: Client, model: FactoryInvoice) -> Invoice:
-        return super()._from_model(cls._client, model)
-
-    def download_pdf(self, client: Client = None) -> Pdf:
-        return super().download_pdf(self._client)
-
-    def set_to_draft(self, client: Client = None):
-        return super().set_to_draft(self._client)
+    def delete(self, *_, **__):
+        return super().delete(client=self._get_client())
 
     @classmethod
-    def get_by_reference(cls, reference: str, client: Client) -> Union[None, Invoice]:
-        return super().get_by_reference(cls._client, reference)
+    def _from_model(cls, model: FactoryInvoice, *_, **__) -> Invoice:
+        return super()._from_model(client=cls._get_client(), model=model)
+
+    def download_pdf(self, *_, **__) -> Pdf:
+        return super().download_pdf(client=self._get_client())
+
+    def set_to_draft(self, *_, **__):
+        return super().set_to_draft(client=self._get_client())
 
     @classmethod
-    def get_by_id(cls, id: int, client: Client = None) -> Union[None, Invoice]:
-        return super().get_by_id(cls._client, id)
+    def get_by_reference(cls, reference: str, *_, **__) -> Union[None, Invoice]:
+        return super().get_by_reference(client=cls._get_client(), reference=reference)
+
+    @classmethod
+    def get_by_id(cls, id: int, *_, **__) -> Union[None, Invoice]:
+        return super().get_by_id(client=cls._get_client(), id=id)

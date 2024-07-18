@@ -80,7 +80,6 @@ class LineItem:
             price_net=self.price_net,
             price_gross=self.price_gross,
             price_tax=self.price_tax,
-            additional_properties=self.additional_properties,
         )
 
     @classmethod
