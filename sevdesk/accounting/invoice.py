@@ -542,32 +542,40 @@ class AuthenticatedInvoice(Invoice, AuthenticatedAccountingObject):
     This allows to create, update and delete the invoice.
     """
 
-    def _get_api_model(self, *_, **__) -> CreateInvoiceByFactoryJsonBody:
+    def _get_api_model(self, client: Client = None) -> CreateInvoiceByFactoryJsonBody:
         return super()._get_api_model(client=self._get_client())
 
-    def update(self, *_, **__):
+    def update(self, client: Client = None):
         return super().update(client=self._get_client())
 
-    def create(self, *_, **__):
+    def create(self, client: Client = None):
         return super().create(client=self._get_client())
 
-    def delete(self, *_, **__):
+    def delete(self, client: Client = None):
         return super().delete(client=self._get_client())
 
     @classmethod
-    def _from_model(cls, model: FactoryInvoice, *_, **__) -> Invoice:
+    def _from_model(cls, client: Client = None, model: FactoryInvoice = None) -> Invoice:
         return super()._from_model(client=cls._get_client(), model=model)
 
-    def download_pdf(self, *_, **__) -> Pdf:
+    def download_pdf(self, client: Client = None) -> Pdf:
         return super().download_pdf(client=self._get_client())
 
-    def set_to_draft(self, *_, **__):
+    def set_to_draft(self, client: Client = None):
         return super().set_to_draft(client=self._get_client())
 
     @classmethod
-    def get_by_reference(cls, reference: str, *_, **__) -> Union[None, Invoice]:
+    def get_by_reference(cls, client: Client = None, reference: str = None) -> Union[None, Invoice]:
+
+        if reference is None:
+            raise ValueError("reference must be set")
+
         return super().get_by_reference(client=cls._get_client(), reference=reference)
 
     @classmethod
-    def get_by_id(cls, id: int, *_, **__) -> Union[None, Invoice]:
+    def get_by_id(cls, client: Client = None, id: int = None) -> Union[None, Invoice]:
+
+        if id is None:
+            raise ValueError("id must be set")
+
         return super().get_by_id(client=cls._get_client(), id=id)
